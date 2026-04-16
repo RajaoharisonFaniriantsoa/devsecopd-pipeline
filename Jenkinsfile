@@ -57,7 +57,7 @@ stage('Stage 5 — Sign Image') {
   steps {
     sh """
       COSIGN_INSECURE_REGISTRY=true cosign sign --yes \
-        --key /var/lib/jenkins/consign_keys/consign.key \
+        --key /var/lib/jenkins/cosign_keys/cosign.key \
         ${HARBOR_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
     """
   }
