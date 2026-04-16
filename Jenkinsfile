@@ -28,20 +28,20 @@ pipeline {
     }
 
     stage('Stage 3 — Container Scan') {
-      steps {
-        sh """
-          trivy image \
-            --exit-code 0 \
-            --severity HIGH,CRITICAL \
-            --format json \
-            --output trivy-report.json \
-            ${HARBOR_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
-        """
-      }
-      post {
-        always { archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true }
-      }
-    }
+  steps {
+    sh """
+      trivy image \
+        --exit-code 0 \
+        --severity HIGH,CRITICAL \
+        --format json \
+        --output trivy-report.json \
+        ${HARBOR_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+    """
+  }
+  post {
+    always { archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true }
+  }
+}
 
     stage('Stage 4 — Sign Image') {
       steps {
