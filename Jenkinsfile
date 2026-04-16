@@ -11,15 +11,15 @@ pipeline {
   stages {
 
     stage('Stage 1 — SAST & Secrets Scan') {
-      steps {
-        sh 'pip3 install bandit --quiet'
-        sh 'pip3 -m bandit -r src/ -f json -o bandit-report.json || true'
-        sh 'gitleaks detect --source=. --report-format json --report-path gitleaks-report.json || true'
-      }
-      post {
-        always { archiveArtifacts artifacts: '*-report.json', allowEmptyArchive: true }
-      }
-    }
+  steps {
+    sh 'pip3 install bandit --quiet'
+    sh '/var/lib/jenkins/.local/bin/bandit -r src/ -f json -o bandit-report.json || true'
+    sh 'gitleaks detect --source=. --report-format json --report-path gitleaks-report.json || true'
+  }
+  post {
+    always { archiveArtifacts artifacts: '*-report.json', allowEmptyArchive: true }
+  }
+}
 
     stage('Stage 2 — Docker Build') {
       steps {
