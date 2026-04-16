@@ -12,8 +12,8 @@ pipeline {
 
     stage('Stage 1 — SAST & Secrets Scan') {
       steps {
-        sh 'pip install bandit --quiet'
-        sh 'bandit -r src/ -f json -o bandit-report.json || true'
+        sh 'pip3 install bandit --quiet'
+        sh 'pip3 -m bandit -r src/ -f json -o bandit-report.json || true'
         sh 'gitleaks detect --source=. --report-format json --report-path gitleaks-report.json || true'
       }
       post {
