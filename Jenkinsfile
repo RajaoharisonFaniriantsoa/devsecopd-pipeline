@@ -43,23 +43,25 @@ pipeline {
   }
 }
 
-    stage('Stage 4 — Sign Image') {
-      steps {
-        sh """
-          echo \$HARBOR_CREDS_PSW | docker login ${HARBOR_REGISTRY} \
-            -u \$HARBOR_CREDS_USR --password-stdin
-          cosign sign --yes \
-            --key /var/jenkins_home/cosign.key \
-            ${HARBOR_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
-        """
-      }
-    }
+    stage('Stage 4 — Push to Harbor') {
+  steps {
+    sh """
+      echo \$HARBOR_CREDS_PSW | docker login ${HARBOR_REGISTRY} \
+        -u \$HARBOR_CREDS_USR --password-stdin
+      docker push ${HARBOR_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+    """
+  }
+}
 
-    stage('Stage 5 — Push to Harbor') {
-      steps {
-        sh "docker push ${HARBOR_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
-      }
-    }
+stage('Stage 5 — Sign Image') {
+  steps {
+    sh """
+      COSIGN_INSECURE_REGISTRY=true cosign sign --yes \
+        --key /var/lib/jenkins/consign_keys/cosign.key \
+        ${HARBOR_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+    """
+  }
+}
 
     stage('Stage 6 — Harbor Scan Policy Check') {
       steps {
