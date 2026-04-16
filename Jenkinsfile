@@ -54,9 +54,14 @@ pipeline {
 }
 
 stage('Stage 5 — Sign Image') {
+  environment {
+    COSIGN_PASSWORD = credentials('cosign-password')
+  }
   steps {
     sh """
-      COSIGN_INSECURE_REGISTRY=true cosign sign --yes \
+      COSIGN_INSECURE_REGISTRY=true \
+      COSIGN_PASSWORD=\$COSIGN_PASSWORD \
+      cosign sign --yes \
         --key /var/lib/jenkins/cosign_keys/cosign.key \
         ${HARBOR_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
     """
